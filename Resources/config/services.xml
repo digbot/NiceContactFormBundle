@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="cadrone_nice_contact_form.form.type" class="Cadrone\NiceContactFormBundle\Form\Type\NiceContactType">
+            <argument type="service" id="service_container" />
+            
+            <tag name="form.type" alias="cadrone_nice_contact_form_type" />
+        </service>
+        
+        <service id="cadrone_nice_contact_form.form_handler" class="Cadrone\NiceContactFormBundle\Processor\FormHandler">
+            <argument>%cadrone.nice_contact_form.processors%</argument>
+            <argument type="service" id="service_container" />
+        </service>
+        
+        <service id="cadrone_nice_contact_form.form.util.subject_resolver" class="Cadrone\NiceContactFormBundle\Util\SubjectResolver">
+            <argument>%cadrone.nice_contact_form.subjects%</argument>
+        </service>
+        
+        <service id="cadrone_nice_contact_form.form.processor.sendmail" class="Cadrone\NiceContactFormBundle\Processor\SendEmailFormProcessor">
+            <argument type="service" id="mailer" />
+            <argument type="service" id="cadrone_nice_contact_form.form.util.subject_resolver" />
+            <argument>%cadrone.nice_contact_form.recipients%</argument>
+        </service>
+    </services>
+</container>
