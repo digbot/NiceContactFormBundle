@@ -1,0 +1,20 @@
+{
+    "name": "chaos-drone/nice-contact-form-bundle",
+    "type": "symfony-bundle",
+    "description": "Ready contact form for Symfony2 project with different process strategies.",
+    "keywords": ["symfony2", "contact form", "page", "pages", "cms"],
+    "homepage": "https://github.com/chaos-drone/NiceContactFormBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cadrone"
+        }
+    ],
+    "require": {
+        "symfony/symfony": "~2.3",
+    },
+    "autoload": {
+        "psr-0": {"Cadrone\\NiceContactFormBundle": ""}
+    },
+    "target-dir": "Cadrone/NiceContactFormBundle"
+}
