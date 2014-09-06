@@ -22,6 +22,15 @@ class ContactFormController extends Controller
             $form->bind($data[0]);
         }
 
+        $queryData = $this->getRequest()->query->get("cadrone_nice_contact_form_type", array());
+        $presetData = $this->getRequest()->get("presetData");
+
+        if (!$this->getRequest()->isMethod("POST") && (!empty($presetData) || !empty($queryData)))
+        {
+            $data = array_merge($queryData, $presetData);
+            $form->setData($data);
+        }
+
         if ($form->isValid()) {
             $this->get('cadrone_nice_contact_form.form_handler')->handle($form);
 
