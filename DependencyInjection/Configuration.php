@@ -22,14 +22,25 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
                 ->children()
-                    ->scalarNode("action")->isRequired()->cannotBeEmpty()->end()
+                    ->scalarNode("action")->defaultValue("cadrone_contact_form")->end()
                     ->arrayNode("processors")
                         ->defaultValue(array("cadrone_nice_contact_form.form.processor.sendmail"))
                         ->prototype("scalar")
                         ->end()
                     ->end()
+                    ->arrayNode("constraints")
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->append($this->addConstraints("name", array("NotBlank" => array())))
+                            ->append($this->addConstraints("email", array("NotBlank" => array(), "Email" => array(),)))
+                            ->append($this->addConstraints("recipients", array("NotBlank" => array())))
+                            ->append($this->addConstraints("subject", array("NotBlank" => array())))
+                            ->append($this->addConstraints("body", array("NotBlank" => array())))
+                        ->end()
+                    ->end()
                     ->scalarNode("captcha")->defaultValue(null)->end()
                     ->arrayNode("labels")
+                        ->addDefaultsIfNotSet()
                         ->children()
                             ->scalarNode("name")->defaultValue("Name")->end()
                             ->scalarNode("email")->defaultValue("E-mail")->end()
@@ -37,8 +48,22 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode("subject")->defaultValue("Subject")->end()
                             ->scalarNode("body")->defaultValue("Text")->end()
                             ->scalarNode("attachments")->defaultValue("Attachments")->end()
-                            ->scalarNode("captcha")->defaultValue("Verification code")->end()
+                            ->scalarNode("captcha")->defaultValue("Please enter the symbols in the image")->end()
                             ->scalarNode("submit")->defaultValue("Send")->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode("messages")
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode("success")->defaultValue("Your message was send successfully.")->end()
+                            ->arrayNode("errors")
+                                ->defaultValue(array())
+                                ->prototype("array")
+                                    ->prototype("array")
+                                        ->prototype("scalar")->end()
+                                    ->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                     ->arrayNode("attachments")
@@ -71,5 +96,23 @@ class Configuration implements ConfigurationInterface
         ;
 
         return $treeBuilder;
+    }
+
+    public function addConstraints($name, $defaults = array())
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root($name);
+
+        $node
+            ->defaultValue($defaults)
+            ->prototype("array")
+                ->prototype("array")
+                    ->defaultValue(array())
+                    ->prototype("scalar")->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 }

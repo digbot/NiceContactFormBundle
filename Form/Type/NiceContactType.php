@@ -14,6 +14,16 @@ class NiceContactType extends AbstractType
      */
     protected $container;
 
+    /**
+     * @var array
+     */
+    protected $constraints;
+
+    /**
+     * @var array
+     */
+    protected $messages;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -29,11 +39,13 @@ class NiceContactType extends AbstractType
         $builder->add("name", null, array(
             "required" => true,
             "label" => $labels["name"],
+            "constraints" => $this->setConstraints("name"),
         ));
 
         $builder->add("email", null, array(
             "required" => true,
             "label" => $labels["email"],
+            "constraints" => $this->setConstraints("email"),
         ));
 
         if ($this->container->getParameter("cadrone.nice_contact_form.recipients") > 0) {
@@ -45,6 +57,7 @@ class NiceContactType extends AbstractType
         $builder->add("body", "textarea", array(
             "required" => true,
             "label" => $labels["body"],
+            "constraints" => $this->setConstraints("body"),
         ));
 
         if (null !== $captcha) {
@@ -91,6 +104,7 @@ class NiceContactType extends AbstractType
                 array(
             "required" => true,
             "label" => $labels["recipients"],
+            "constraints" => $this->setConstraints("recipients"),
                 ), $config
         );
     }
@@ -120,6 +134,7 @@ class NiceContactType extends AbstractType
                 array(
             "required" => true,
             "label" => $labels["subject"],
+            "constraints" => $this->setConstraints("subject"),
                 ), $config
         );
     }
@@ -133,6 +148,42 @@ class NiceContactType extends AbstractType
             return $action;
         } else {
             return $router->generate($action);
+        }
+    }
+
+    protected function setConstraints($name)
+    {
+        if (null === $this->constraints) {
+            $this->constraints = $this->container->getParameter("cadrone.nice_contact_form.constraints");
+        }
+
+        if (null === $this->messages) {
+            $this->messages = $this->container->getParameter("cadrone.nice_contact_form.message.errors");
+        }
+
+        if (array_key_exists($name, $this->constraints) && !empty($this->constraints[$name])) {
+
+            foreach ($this->constraints[$name] as $constraint => $options) {
+
+                $class = "Symfony\\Component\\Validator\\Constraints\\".$constraint;
+
+                if (array_key_exists($name, $this->messages) && array_key_exists($constraint, $this->messages[$name])) {
+                    $options = array_merge($options, $this->messages[$name][$constraint]);
+                }
+
+                if (class_exists($class)) {
+                    $configuration[] = new $class($options);
+                } elseif (class_exists($constraint)) {
+                    $configuration[] = new $constraint($options);
+                } else {
+                    //throw class not fund exception
+                }
+            }
+
+            return $configuration;
+
+        } else {
+            return array();
         }
     }
 

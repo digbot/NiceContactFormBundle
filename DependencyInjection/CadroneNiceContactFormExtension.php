@@ -46,10 +46,13 @@ class CadroneNiceContactFormExtension extends Extension
 
         $container->setParameter("cadrone.nice_contact_form.recipients", $config["recipients"]);
         $container->setParameter("cadrone.nice_contact_form.subjects", $config["subjects"]);
+        $container->setParameter("cadrone.nice_contact_form.constraints", $config["constraints"]);
         $container->setParameter("cadrone.nice_contact_form.labels", $config["labels"]);
         $container->setParameter("cadrone.nice_contact_form.captcha", $config["captcha"]);
         $container->setParameter("cadrone.nice_contact_form.processors", $config["processors"]);
         $container->setParameter("cadrone.nice_contact_form.action", $config["action"]);
+        $container->setParameter("cadrone.nice_contact_form.message.success", $config["messages"]["success"]);
+        $container->setParameter("cadrone.nice_contact_form.message.errors", $config["messages"]["errors"]);
 
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
