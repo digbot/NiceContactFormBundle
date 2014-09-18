@@ -1,5 +1,5 @@
 {
-    "name": "chaos-drone/nice-contact-form-bundle",
+    "name": "digbot/nice-contact-form-bundle",
     "type": "symfony-bundle",
     "description": "Ready contact form for Symfony2 project with different process strategies.",
     "keywords": ["symfony2", "contact form", "page", "pages", "cms"],
